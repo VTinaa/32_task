@@ -15,12 +15,10 @@
             this._radius = radius;
         }
 
-        // Get-властивість для отримання радіуса кола
         get radius() {
             return this._radius;
         }
 
-        // Set-властивість для встановлення радіуса кола
         set radius(newRadius) {
             if (newRadius >= 0) {
                 this._radius = newRadius;
@@ -29,31 +27,28 @@
             }
         }
 
-        // Get-властивість для отримання діаметру кола
         get diameter() {
             return this._radius * 2;
         }
 
-        // Метод для обчислення площі кола
         calculateArea() {
             return Math.PI * this._radius ** 2;
         }
 
-        // Метод для обчислення довжини кола
         calculateCircumference() {
             return 2 * Math.PI * this._radius;
         }
     }
 
    
-    const circle = new Circle(5); // Створення об'єкту кола з радіусом 5
+    let circle = new Circle(5);
 
     console.log(`Радіус кола: ${circle.radius}`);
     console.log(`Діаметр кола: ${circle.diameter}`);
     console.log(`Площа кола: ${circle.calculateArea()}`);
     console.log(`Довжина кола: ${circle.calculateCircumference()}`);
 
-    // Заміна радіус кола через set-властивість
+   
     circle.radius = 7;
     console.log(`Новий радіус кола: ${circle.radius}`);
 }
@@ -84,81 +79,96 @@
 // з ідентифікатором wrapper.
 
 {
-    // class HtmlElement {
-    //     constructor(tagName, isSelfClosing = false, textContent = "") {
-    //         this.tagName = tagName;
-    //         this.isSelfClosing = isSelfClosing;
-    //         this.textContent = textContent;
-    //         this.attributes = [];
-    //         this.styles = [];
-    //         this.children = [];
-    //     }
+    class HtmlElement {
+        constructor(tagName, selfClosing = false) {
+          this.tagName = tagName;
+          this.selfClosing = selfClosing;
+          this.textContent = "";
+          this.attributes = [];
+          this.styles = {};
+          this.children = [];
+        }
+      
+        setAttribute(name, value) {
+          this.attributes.push({ name, value });
+        }
+      
+        setStyle(name, value) {
+          this.styles[name] = value;
+        }
+      
+        addChild(element) {
+          this.children.push(element);
+        }
+      
+        addChildAtBeginning(element) {
+          this.children.unshift(element);
+        }
+      
+        getHtml() {
+          let attributesStr = this.attributes.map(attr => `${attr.name}="${attr.value}"`).join(" ");
+          let stylesStr = Object.keys(this.styles).map(style => `${style}:${this.styles[style]}`).join(";");
+      
+          let html = `<${this.tagName} ${attributesStr}`;
+          if (stylesStr) {
+            html += ` style="${stylesStr}"`;
+          }
+      
+          if (this.selfClosing) {
+            html += " />";
+          } else {
+            html += ">";
+            if (this.textContent) {
+              html += this.textContent;
+            }
+      
+            for (const child of this.children) {
+              html += child.getHtml();
+            }
+      
+            html += `</${this.tagName}>`;
+          }
+      
+          return html;
+        }
+      }
+      
+      
+      let wrapper = new HtmlElement("div", false);
+      wrapper.setAttribute("id", "wrapper");
+      wrapper.setStyle("display", "flex");
+      
+      let div1 = new HtmlElement("div", false);
+      div1.setStyle("width", "300px");
+      div1.setStyle("margin", "10px");
+      
+      let h3 = new HtmlElement("h3", false);
+      h3.textContent = "What is Lorem Ipsum?";
+      let img = new HtmlElement("img", true);
+      img.setAttribute("src", "lipsum.jpg");
+      img.setAttribute("alt", "");
+      img.setStyle("width", "100%");
+      
+      let p = new HtmlElement("p", false);
+      p.setStyle("text-align", "justify");
+      p.textContent =
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur incidunt accusantium molestias. Officiis deserunt excepturi nisi consequuntur nostrum praesentium. Optio, voluptatem. Corporis, dolores molestias! Saepe repellat dolorum eligendi natus sequi!";
+      
+      let a = new HtmlElement("a", false);
+      a.setAttribute("href", "https://www.lipsum.com/");
+      a.setAttribute("target", "_blank");
+      a.textContent = "More...";
+      
+      p.addChild(a);
+      div1.addChild(h3);
+      div1.addChild(img);
+      div1.addChild(p);
+      
+      wrapper.addChild(div1);
+      
 
-    //     setAttribute(attributeName, attributeValue) {
-    //         this.attributes.push({ name: attributeName, value: attributeValue });
-    //     }
-
-    //     setStyle(styleName, styleValue) {
-    //         this.styles.push({ name: styleName, value: styleValue });
-    //     }
-
-    //     addChild(childElement) {
-    //         this.children.push(childElement);
-    //     }
-
-    //     // Метод для додавання вкладеного елемента на початок поточного елемента
-    //     prependChild(childElement) {
-    //         this.children.unshift(childElement);
-    //     }
-
-    //     getHtml() {
-    //         const attributesString = this.attributes
-    //             .map((attribute) => `${attribute.name}="${attribute.value}"`)
-    //             .join(" ");
-    //         const stylesString = this.styles
-    //             .map((style) => `${style.name}:${style.value};`)
-    //             .join(" ");
-
-    //         let element = `<${this.tagName}`;
-    //         if (attributesString) {
-    //             element += ` ${attributesString}`;
-    //         }
-    //         if (stylesString) {
-    //             element += ` style="${stylesString}"`;
-    //         }
-    //         if (this.isSelfClosing) {
-    //             element += `/>`;
-    //         } else {
-    //             element += `>${this.textContent}`;
-    //             for (const child of this.children) {
-    //                 element += child.getHtml();
-    //             }
-    //             element += `</${this.tagName}>`;
-    //         }
-
-    //         return element;
-    //     }
-    // }
-
-    // // Створення HTML-елементів
-    // const wrapper = new HtmlElement("div");
-    // const heading = new HtmlElement("h1", false, "Заголовок сторінки");
-    // const paragraph = new HtmlElement("p", false, "Це текстовий параграф.");
-    // const link = new HtmlElement("a", false, "Посилання");
-    // link.setAttribute("href", "https://example.com");
-
-    // // Додавання вкладених елементів
-    // wrapper.addChild(heading);
-    // wrapper.addChild(paragraph);
-    // paragraph.addChild(link);
-
-    // // Додавання вкладеного елемента на початок
-    // const intro = new HtmlElement("p", false, "Вітаємо на нашому веб-сайті!");
-    // wrapper.prependChild(intro);
-
-    // // Генерація HTML-коду та вивід на сторінку
-    // const htmlCode = wrapper.getHtml();
-    // document.write(htmlCode);
+      document.write(wrapper.getHtml());
+      
 }
 
 
@@ -178,24 +188,21 @@
             this.styles = {};
         }
 
-        // Метод для встановлення стилю
         setStyle(styleName, styleValue) {
             this.styles[styleName] = styleValue;
         }
 
-        // Метод для видалення стилю
         removeStyle(styleName) {
             if (this.styles.hasOwnProperty(styleName)) {
                 delete this.styles[styleName];
             }
         }
 
-        // Метод для отримання CSS-коду
         getCss() {
             let cssCode = `.${this.className} {`;
-            for (const styleName in this.styles) {
+            for (let styleName in this.styles) {
                 if (this.styles.hasOwnProperty(styleName)) {
-                    const styleValue = this.styles[styleName];
+                    let styleValue = this.styles[styleName];
                     cssCode += `${styleName}: ${styleValue};`;
                 }
             }
@@ -204,8 +211,8 @@
         }
     }
 
-    // Приклад використання
-    const myClass = new CssClass("my-class");
+    
+    let myClass = new CssClass("my-class");
     myClass.setStyle("color", "red");
     myClass.setStyle("font-size", "16px");
 
@@ -359,4 +366,3 @@
     //   document.getElementById("output").innerHTML = htmlCode;
       
 }
-
